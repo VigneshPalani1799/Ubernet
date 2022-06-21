@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Header from '../components/Header';
 import login from '../assets/login.svg';
+import { Link } from 'react-router-dom';
 
 export default function LoginPage() {
 
@@ -45,12 +46,12 @@ export default function LoginPage() {
                 <div className='pass'>Forgot Password?</div>
                 <input type="submit" value="Login"  />
                 <div className="signup_link">
-                    Not a Member?<p>Register Now</p>
+                    Not a Member?<Link to="/register"><p>Register Now</p></Link>
                 </div>
             </form>
         </div>
         <div>
-            <img src={login} alt="SVG NOT FOUND" width="60%" height="100%" style={{marginLeft:"25px"}}/>
+            <img src={login} alt="SVG NOT FOUND" width="60%" height="100%" style={{marginLeft:"10%"}}/>
         </div>
         </div>
     </>
