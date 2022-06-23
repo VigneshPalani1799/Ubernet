@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import Header from '../components/Header';
 import register from '../assets/register.svg'
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export default function Register() {
 
@@ -12,7 +13,8 @@ export default function Register() {
         pincode:'',
         phone:'',
         password:'',
-        rpassword:''
+        rpassword:'',
+        message:''
     });
 
     const handleChange = (event) =>{
@@ -28,7 +30,52 @@ export default function Register() {
 
     const handleSubmit = (event) =>{
         event.preventDefault();
-        console.log(input);
+        if(!input.pincode.match(/57[0-9]{4}/)){
+            setinput(prevInput=>{
+                return{
+                    ...prevInput,
+                    message:"Sorry we dont serve this city yet"
+                }
+            });
+            return;
+        }
+        else{
+            setinput(prevInput=>{
+                return{
+                    ...prevInput,
+                    message:""
+                }
+            });
+        }
+        if(input.password!==input.rpassword){
+            setinput(prevInput=>{
+                return{
+                    ...prevInput,
+                    message:"Both Passwords should match."
+                }
+            })
+            return;
+        }
+        axios.get(`http://localhost:3001/user/${input.phone}`)
+        .then(res=>{
+            if(res.data===null){
+                setinput(prevInput=>{
+                    return{
+                        ...prevInput,
+                        message:"Registration successful"
+                    }
+                })
+            }
+            else{
+                if(res.data.phone===input.phone)
+                setinput(prevInput=>{
+                    return{
+                        ...prevInput,
+                        message:"User already exist"
+                    }
+                })
+            }
+        })
     }
   return (
     <>
@@ -43,7 +90,7 @@ export default function Register() {
                     <label>Name</label>
                 </div>
                 <div className='txt_field'>
-                    <input type="tel" required={true} name="phone" value={input.phone} onChange={handleChange}/>
+                    <input type="tel" required={true} name="phone" value={input.phone} onChange={handleChange} pattern="[6-9]{1}[0-9]{9}"/>
                     <span></span>
                     <label>Phone Number</label>
                 </div>
@@ -68,10 +115,11 @@ export default function Register() {
                     <label>City</label>
                 </div>
                 <div className='txt_field'>
-                    <input type="text" required={true} onChange={handleChange} name="pincode" value={input.pincode}/>
+                    <input type="text" required={true} onChange={handleChange} name="pincode" value={input.pincode} pattern="[0-9]{6}"/>
                     <span></span>
                     <label>Pincode</label>
                 </div>
+                <p style={{color:"red"}}>{input.message}</p>
                 <input type="submit" value="Register"  />
                 <div className="signup_link">
                     Already a Member?<Link to="/login"><p>Sign In</p></Link>
